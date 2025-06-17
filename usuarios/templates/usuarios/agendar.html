@@ -40,7 +40,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Fecha y hora</label>
-                    <input type="datetime-local" class="form-control" name="fecha_hora" required>
+                    <input type="datetime-local" class="form-control" name="fecha_hora" required min="{{ fecha_actual }}"required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Servicio solicitado</label>
@@ -78,7 +78,7 @@
                     Aceptación de la política de cancelación y reprogramación de citas
                 </label>
             </div>
-            <button type="submit" class="btn w-100 mt-4" style="background-color: #C79E42; color: white; font-weight: bold;">
+            <button type="submit" class="btn w-100 mt-4" style="background-color: #fec2c2; color: #C79E42; font-family: Pattaya, cursive; font-weight: bold;">
                 Agendar cita
             </button>
         </form>

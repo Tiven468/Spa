@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Usuarios, Perfiles, Agendarcita, Horarios
 from django.core.serializers.json import DjangoJSONEncoder
+from datetime import datetime
 import json
 
 def adminpage(request):
@@ -12,12 +13,13 @@ def adminpage(request):
             "fecha": c.horarios_idhorarios.Fecha.strftime("%Y-%m-%d"),
             "hora": c.horarios_idhorarios.Hora,
             "servicio": c.Servicio,
-            "usuario": c.usuarios_idusuarios.Nombre,  # Ajusta según tu modelo
+            "usuario": c.usuarios_idusuarios.Nombre, 
             "metodopago": c.MetodoPago,
             "alergias": c.Alergias,
         })
     citas_json = json.dumps(citas, cls=DjangoJSONEncoder)
     return render(request, 'usuarios/admin.html', {"citas_json": citas_json})
+
 def login(request):
     if request.method == 'POST':
         correo = request.POST.get('correo')
@@ -88,6 +90,7 @@ def agendar(request):
     usuario_id = request.session.get('usuario_id')
     if not usuario_id:
         return redirect('login')
+    
     try:
         usuario = Usuarios.objects.get(idusuarios=usuario_id)
     except Usuarios.DoesNotExist:
@@ -97,27 +100,35 @@ def agendar(request):
     error = None
 
     if request.method == 'POST':
-        fecha_hora = request.POST.get('fecha_hora')  # formato: 'YYYY-MM-DDTHH:MM'
+        fecha_hora_str = request.POST.get('fecha_hora') 
         servicio = request.POST.get('servicio')
         metodopago = request.POST.get('metodo_pago')
         alergias = request.POST.get('alergias')
 
-        if fecha_hora:
-            try:
-                fecha, hora = fecha_hora.split('T')
-            except ValueError:
-                fecha, hora = None, None
-        else:
-            fecha, hora = None, None
+        fecha = None
+        hora = None
 
-        if not (fecha and hora and servicio and metodopago):
-            error = 'Todos los campos son obligatorios.'
+        if fecha_hora_str:
+            try:
+                fecha_completa = datetime.strptime(fecha_hora_str, '%Y-%m-%dT%H:%M')
+
+                if fecha_completa < datetime.now():
+                    error = 'No puedes agendar una cita en el pasado.'
+                else:
+                    fecha = fecha_completa.date()
+                    hora = fecha_completa.strftime('%H:%M')
+            except ValueError:
+                error = 'Formato de fecha y hora no válido.'
         else:
-            # Verificar si el horario ya existe
+            error = 'Debes seleccionar una fecha y hora válidas.'
+
+        if not error and not (servicio and metodopago):
+            error = 'Todos los campos son obligatorios.'
+        
+        if not error:
             if Horarios.objects.filter(fecha=fecha, hora=hora).exists():
                 error = 'Ese horario ya está ocupado. Elige otro.'
             else:
-                # Crear el horario y la cita
                 horario = Horarios.objects.create(fecha=fecha, hora=hora)
                 Agendarcita.objects.create(
                     usuarios_idusuarios=usuario,
@@ -131,5 +142,6 @@ def agendar(request):
     return render(request, 'usuarios/agendar.html', {
         'usuario': usuario,
         'mensaje': mensaje,
-        'error': error
+        'error': error,
+        'fecha_actual': datetime.now().strftime('%Y-%m-%dT%H:%M') 
     })
