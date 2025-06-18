@@ -29,7 +29,7 @@ def login(request):
             request.session['usuario_id'] = usuario.idusuarios
             request.session['perfil'] = usuario.perfiles_idperfiles.descripcion.lower()
             if usuario.perfiles_idperfiles_id == 1:
-                return redirect('adminpage')
+                return redirect('adminbase')
             else:
                 return redirect('index')
         except Usuarios.DoesNotExist:
@@ -145,3 +145,17 @@ def agendar(request):
         'error': error,
         'fecha_actual': datetime.now().strftime('%Y-%m-%dT%H:%M') 
     })
+
+
+
+def adminbase(request):
+    return render(request, 'usuarios/base.html')
+
+
+
+def crudusuarios(request):
+    return render(request, 'usuarios/crudusuarios.html')
+
+def listausuarios(request):
+    usuarios = Usuarios.objects.all()
+    return render(request, 'usuarios/crudusuarios.html', {'usuarios': usuarios})
