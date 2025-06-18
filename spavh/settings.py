@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'spavh.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME':'spavh',
+        'NAME':'spa',
         'USER':'root',
         'PASSWORD': '',
         'HOST':'localhost',
