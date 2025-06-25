@@ -1,0 +1,20 @@
+.botonAgregaServicio {
+    background-color: #fec2c2;
+}
+
+.cuadro-agregar {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 30px;
+    max-width: 100% !important;
+    width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 2px 8px #707070;
+    background: rgba(255, 255, 255, 0.85); 
+}
+
+body{
+    background: linear-gradient(to top, #fec2c2, #ffffff)!important;
+}
+
+

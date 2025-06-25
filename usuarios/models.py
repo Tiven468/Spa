@@ -6,6 +6,7 @@
 #   * Remove managed = False lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from django.shortcuts import render, redirect
 
 
 class Horarios(models.Model):
@@ -228,3 +229,18 @@ class Usuarios(models.Model):
     class Meta:
         managed = False
         db_table='usuarios'
+
+
+class Agregarservicio(models.Model):
+    idagregarservicio = models.AutoField(db_column='IdAgregarServicio', primary_key=True)  # Field name made lowercase.
+    nombre = models.CharField(db_column='Nombre', max_length=100)  # Field name made lowercase.
+    descripcion = models.TextField()
+    precio = models.DecimalField(max_digits=8, decimal_places=2)
+    imagen = models.ImageField(upload_to='servicios/', blank=True, null=True)
+
+    class Meta:
+        db_table = 'agregarservicio'
+
+def lista_servicios(request):
+    servicios = Agregarservicio.objects.all()
+    return render(request, 'usuarios/lista_servicios.html', {'servicios': servicios})

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Servicios</title>
+</head>
+<body>
+    <h2>Servicios registrados</h2>
+    <ul>
+        {% for servicio in servicios %}
+            <li>
+                <strong>{{ servicio.nombre }}</strong><br>
+                {{ servicio.descripcion }}<br>
+                Precio: ${{ servicio.precio }}<br>
+                {% if servicio.imagen %}
+                    <img src="{{ servicio.imagen.url }}" alt="Imagen del servicio" width="120">
+                {% endif %}
+            </li>
+            <hr>
+        {% empty %}
+            <li>No hay servicios registrados.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+

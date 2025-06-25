@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Usuarios, Perfiles, Agendarcita, Horarios
+from .models import Usuarios, Perfiles, Agendarcita, Horarios, Agregarservicio
 from django.core.serializers.json import DjangoJSONEncoder
 from datetime import datetime
 import json
+from .forms import ServicioForm
 
 def adminpage(request):
     citas_qs = Agendarcita.objects.select_related('usuarios_idusuarios', 'horarios_idhorarios').all()
@@ -159,3 +160,19 @@ def crudusuarios(request):
 def listausuarios(request):
     usuarios = Usuarios.objects.all()
     return render(request, 'usuarios/crudusuarios.html', {'usuarios': usuarios})
+
+
+def agregarservicio(request):
+    if request.method == 'POST':
+        form = ServicioForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Servicio agregado correctamente')
+            return redirect('agregarservicio')  # O redirige a la lista de servicios si prefieres
+    else:
+        form = ServicioForm()
+    return render(request, 'usuarios/agregarservicio.html', {'form': form})
+
+def lista_servicios(request):
+    servicios = Agregarservicio.objects.all()
+    return render(request, 'usuarios/lista_servicios.html', {'servicios': servicios})
